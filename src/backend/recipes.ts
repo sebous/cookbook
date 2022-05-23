@@ -21,12 +21,12 @@ export async function processRecipeUrl(url: string): Promise<RecipeDto> {
     .filter((el) => RECIPE_KEYWORDS.includes($(el).text().toLowerCase()));
 
   if (ingredientElements.length === 0) {
-    throw "no keywords found";
+    throw "mfs be lazyloading their shit, fix incoming";
   }
 
   const html = $(ingredientElements[0]).parent().html();
   if (!html) {
-    throw "html corrupted";
+    throw "html corrupted, this recipe is fu**ed mate";
   }
   const markdown = NodeHtmlMarkdown.translate(html);
 
