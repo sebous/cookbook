@@ -26,9 +26,16 @@ export default withTRPC<AppRouter>({
      * @link https://trpc.io/docs/ssr
      */
     const url = `${getBaseUrl()}/api/trpc`;
+    // ctx?.res?.setHeader(
+    //   "Cache-Control",
+    //   `s-maxage=1, stale-while-revalidate=10`
+    // );
 
     return {
       url,
+      // headers: {
+      //   "x-ssr": "1",
+      // },
       /**
        * @link https://react-query.tanstack.com/reference/QueryClient
        */
@@ -38,5 +45,5 @@ export default withTRPC<AppRouter>({
   /**
    * @link https://trpc.io/docs/ssr
    */
-  ssr: true,
+  ssr: false,
 })(MyApp);
