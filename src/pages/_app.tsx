@@ -28,7 +28,7 @@ export default withTRPC<AppRouter>({
     const url = `${getBaseUrl()}/api/trpc`;
     // ctx?.res?.setHeader(
     //   "Cache-Control",
-    //   `s-maxage=1, stale-while-revalidate=10`
+    //   `s-maxage=1, stale-while-revalidate=600`
     // );
 
     return {
