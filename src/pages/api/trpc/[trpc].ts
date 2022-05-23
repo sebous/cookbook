@@ -19,7 +19,7 @@ export const appRouter = trpc
     }),
     async resolve({ input }) {
       const recipe = await prisma.recipe.findFirst({
-        where: { id: { equals: input.id } },
+        where: { id: input.id },
       });
       return recipe;
     },

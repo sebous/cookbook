@@ -1,5 +1,4 @@
 import { trpc } from "@/utils/trpc";
-import Markdown from "markdown-to-jsx";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 
@@ -20,7 +19,7 @@ const Detail: NextPage = () => {
   return (
     <div>
       <h2>{recipe.data.name}</h2>
-      <Markdown>{recipe.data.markdownBody}</Markdown>
+      <div dangerouslySetInnerHTML={{ __html: recipe.data.htmlBody }}></div>
     </div>
   );
 };
