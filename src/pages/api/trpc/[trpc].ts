@@ -19,6 +19,7 @@ export const appRouter = trpc
     }),
     async resolve({ input }) {
       const processedRecipe = await processRecipeUrl(input.url);
+      console.log(processedRecipe);
       const created = await prisma.recipe.create({
         data: {
           ...processedRecipe,
