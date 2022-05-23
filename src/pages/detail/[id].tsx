@@ -8,7 +8,6 @@ const Detail: NextPage = () => {
   const { id } = router.query;
 
   if (!id || Array.isArray(id)) {
-    router.replace("/404");
     return null;
   }
 
