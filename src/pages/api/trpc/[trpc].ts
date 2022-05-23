@@ -13,6 +13,17 @@ export const appRouter = trpc
       return recipes;
     },
   })
+  .query("recipe-detail", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input }) {
+      const recipe = await prisma.recipe.findFirst({
+        where: { id: { equals: input.id } },
+      });
+      return recipe;
+    },
+  })
   .mutation("import-recipe", {
     input: z.object({
       url: z.string(),

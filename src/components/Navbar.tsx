@@ -1,12 +1,17 @@
+import Link from "next/link";
 import React from "react";
 
 export const Navbar = () => {
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
-        <a className="btn btn-ghost normal-case text-xl">daisyUI</a>
+        <Link href="/dashboard">
+          <a className="btn btn-ghost normal-case text-xl">
+            cookbook unbloatified
+          </a>
+        </Link>
       </div>
-      <div className="flex-none">
+      {/* <div className="flex-none">
         <ul className="menu menu-horizontal p-0">
           <li>
             <a>Item 1</a>
@@ -37,7 +42,7 @@ export const Navbar = () => {
             <a>Item 3</a>
           </li>
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 };

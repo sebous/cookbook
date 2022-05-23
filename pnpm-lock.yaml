@@ -15,6 +15,7 @@ specifiers:
   daisyui: ^2.15.0
   eslint: 8.15.0
   eslint-config-next: 12.1.6
+  markdown-to-jsx: ^7.1.7
   next: 12.1.6
   next-auth: ^4.3.4
   node-html-markdown: ^1.2.0
@@ -39,6 +40,7 @@ dependencies:
   autoprefixer: 10.4.7_postcss@8.4.14
   cheerio: 1.0.0-rc.11
   daisyui: 2.15.0_ugi4xkrfysqkt4c4y6hkyfj344
+  markdown-to-jsx: 7.1.7_react@18.1.0
   next: 12.1.6_ef5jwxihqo6n7gxfmzogljlgcm
   next-auth: 4.3.4_ef5jwxihqo6n7gxfmzogljlgcm
   node-html-markdown: 1.2.0
@@ -1750,6 +1752,15 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+
+  /markdown-to-jsx/7.1.7_react@18.1.0:
+    resolution: {integrity: sha512-VI3TyyHlGkO8uFle0IOibzpO1c1iJDcXcS/zBrQrXQQvJ2tpdwVzVZ7XdKsyRz1NdRmre4dqQkMZzUHaKIG/1w==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      react: '>= 0.14.0'
+    dependencies:
+      react: 18.1.0
+    dev: false
 
   /match-sorter/6.3.1:
     resolution: {integrity: sha512-mxybbo3pPNuA+ZuCUhm5bwNkXrJTbsk5VWbR5wiwz/GC6LIiegBGn2w3O08UG/jdbYLinw51fSQ5xNU1U3MgBw==}

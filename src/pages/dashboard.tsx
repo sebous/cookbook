@@ -1,6 +1,7 @@
 import { RecipeCard } from "@/components/dashboard/RecipeCard";
 import { trpc } from "@/utils/trpc";
 import type { NextPage } from "next";
+import Link from "next/link";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 
@@ -35,7 +36,11 @@ const Dashboard: NextPage = () => {
       </div>
       <div className="container mx-auto">
         {recipes.data.map((r) => (
-          <RecipeCard name={r.name} key={r.id} />
+          <Link href={`/detail/${r.id}`} key={r.id}>
+            <a>
+              <RecipeCard name={r.name} />
+            </a>
+          </Link>
         ))}
       </div>
     </>
