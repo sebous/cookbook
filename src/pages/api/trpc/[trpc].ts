@@ -9,7 +9,9 @@ export const appRouter = trpc
   .query("all-recipes", {
     input: z.undefined(),
     async resolve() {
-      const recipes = await prisma.recipe.findMany();
+      const recipes = await prisma.recipe.findMany({
+        select: { id: true, name: true },
+      });
       return recipes;
     },
   })
@@ -30,7 +32,6 @@ export const appRouter = trpc
     }),
     async resolve({ input }) {
       const processedRecipe = await processRecipeUrl(input.url);
-      console.log(processedRecipe);
       const created = await prisma.recipe.create({
         data: {
           ...processedRecipe,
