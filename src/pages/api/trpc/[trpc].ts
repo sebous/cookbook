@@ -31,10 +31,18 @@ export const appRouter = trpc
       url: z.string(),
     }),
     async resolve({ input }) {
+      const duplicate = await prisma.recipe.findFirst({
+        where: {
+          url: input.url,
+        },
+      });
+      if (duplicate) throw "duplicate recipe";
+
       const processedRecipe = await processRecipeUrl(input.url);
       const created = await prisma.recipe.create({
         data: {
           ...processedRecipe,
+          url: input.url,
           parsedName: processedRecipe.name,
         },
       });

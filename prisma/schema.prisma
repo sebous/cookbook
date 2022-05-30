@@ -16,6 +16,7 @@ model Recipe {
   parsedName   String
   htmlBody     String
   markdownBody String
+  url          String
   userNotes    String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

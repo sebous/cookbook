@@ -4,5 +4,5 @@
 
 body,
 html {
-  @apply bg-gray-800 text-gray-100 h-full;
+  @apply bg-gray-800 text-gray-100 min-h-screen;
 }

@@ -17,10 +17,13 @@ const Detail: NextPage = () => {
   }
 
   return (
-    <div>
+    <article className="prose">
       <h2>{recipe.data.name}</h2>
-      <div dangerouslySetInnerHTML={{ __html: recipe.data.htmlBody }}></div>
-    </div>
+      <div
+        dangerouslySetInnerHTML={{ __html: recipe.data.htmlBody }}
+        className="pb-32"
+      ></div>
+    </article>
   );
 };
 
