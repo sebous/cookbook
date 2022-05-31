@@ -21,7 +21,7 @@ const Detail: NextPage = () => {
       <h2>{recipe.data.name}</h2>
       <div
         dangerouslySetInnerHTML={{ __html: recipe.data.htmlBody }}
-        className="pb-32"
+        className="pb-8"
       ></div>
     </article>
   );

@@ -28,7 +28,7 @@ export const appRouter = trpc
   })
   .mutation("import-recipe", {
     input: z.object({
-      url: z.string(),
+      url: z.string().url(),
     }),
     async resolve({ input }) {
       const duplicate = await prisma.recipe.findFirst({

@@ -1,3 +1,4 @@
+import { REGEX } from "@/backend/constants/regex";
 import React, { useRef, useState } from "react";
 
 interface UrlInputProps {
@@ -8,10 +9,15 @@ interface UrlInputProps {
 export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
   const [url, setUrl] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const isUrlInvalid = !REGEX.URL.test(url) && url !== "";
+
   return (
     <>
       <input
-        className="input flex-1 mr-2 text-lg"
+        className={`input ${
+          isUrlInvalid ? "input-error" : ""
+        } flex-1 mr-2 text-lg`}
         type="text"
         ref={inputRef}
         placeholder="paste your url (https://some-bloated-cookbook.com/history-of-rice)"
@@ -43,6 +49,7 @@ export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
       </button>
       <button
         className={`btn btn-primary ${isLoading ? "loading" : ""}`}
+        disabled={isUrlInvalid || url === ""}
         type="button"
         onClick={() => submitFn(url)}
       >
