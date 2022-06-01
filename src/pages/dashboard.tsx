@@ -1,6 +1,7 @@
+import prisma from "@/backend/prisma";
 import { RecipeCard, UrlInput } from "@/components/dashboard";
 import { trpc } from "@/utils/trpc";
-import type { NextPage } from "next";
+import type { GetStaticPaths, NextPage } from "next";
 import Link from "next/link";
 import { useQueryClient } from "react-query";
 

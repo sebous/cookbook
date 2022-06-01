@@ -1,7 +1,6 @@
 import prisma from "@/backend/prisma";
-import { setCacheHeader } from "@/utils/ssrHeader";
 import type { inferAsyncReturnType } from "@trpc/server";
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
 const getRecipeDetail = async (id: string) => {
   return prisma.recipe.findFirst({ where: { id } });
@@ -23,9 +22,8 @@ const RecipePage: NextPage<{ recipe: NonNullable<RecipeQueryResult> }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  setCacheHeader(60 * 10, 60 * 60, ctx.res);
-  const { id } = ctx.query;
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const id = ctx.params?.["id"];
 
   if (!id || Array.isArray(id)) {
     return {
@@ -35,7 +33,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-
   const recipe = await getRecipeDetail(id);
   if (!recipe) {
     return {
@@ -48,6 +45,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: { recipe },
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const recipes = await prisma.recipe.findMany({
+    select: { id: true },
+  });
+
+  return {
+    paths: recipes.map((r) => ({ params: { id: r.id } })),
+    fallback: "blocking",
   };
 };
 
