@@ -45,6 +45,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   return {
     props: { recipe },
+    revalidate: 60 * 60,
   };
 };
 
