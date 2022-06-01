@@ -3,7 +3,7 @@ import React from "react";
 
 export const Navbar = () => {
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar">
       <div className="flex-1">
         <Link href="/dashboard">
           <a className="btn btn-ghost normal-case text-xl">

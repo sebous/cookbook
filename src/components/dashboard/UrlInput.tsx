@@ -15,7 +15,7 @@ export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
   return (
     <>
       <input
-        className={`input ${
+        className={`input input-bordered ${
           isUrlInvalid ? "input-error" : ""
         } flex-1 mr-2 text-lg`}
         type="text"
