@@ -55,7 +55,7 @@ const Dashboard: NextPage = () => {
       )}
       <div className="container mx-auto">
         {recipes.data.map((r) => (
-          <Link href={`/detail/${r.id}`} key={r.id}>
+          <Link href={`/recipe/${r.id}`} key={r.id}>
             <a>
               <RecipeCard name={r.name} />
             </a>
