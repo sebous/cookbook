@@ -1,22 +1,35 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { withTRPC } from "@trpc/next";
-import type { AppRouter } from "./api/trpc/[trpc]";
 import { Layout } from "@/components/Layout";
+import type { AppRouter } from "@/backend/routers";
+import { SessionProvider } from "next-auth/react";
+import superjson from "superjson";
+import type { NextPage } from "next";
+import { AuthGuard } from "@/components/AuthGuard";
 
-function MyApp({ Component, pageProps }: AppProps) {
+export type NextAppPage<P = any, IP = P> = NextPage<P, IP> & {
+  requireAuth?: boolean;
+};
+
+function MyApp(props: AppProps) {
+  const { Component, pageProps }: { Component: NextAppPage; pageProps: any } =
+    props;
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <SessionProvider session={pageProps.session}>
+      {Component.requireAuth ? (
+        <AuthGuard>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </AuthGuard>
+      ) : (
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      )}
+    </SessionProvider>
   );
-}
-
-function getBaseUrl() {
-  if (typeof window) return ""; // Browser should use current path
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
-
-  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 }
 
 export default withTRPC<AppRouter>({
@@ -33,9 +46,16 @@ export default withTRPC<AppRouter>({
 
     return {
       url,
-      // headers: {
-      //   "x-ssr": "1",
-      // },
+      transformer: superjson,
+      headers: () => {
+        if (ctx?.req) {
+          return {
+            ...ctx.req.headers,
+            "x-ssr": "1",
+          };
+        }
+        return {};
+      },
       /**
        * @link https://react-query.tanstack.com/reference/QueryClient
        */
@@ -47,3 +67,10 @@ export default withTRPC<AppRouter>({
    */
   ssr: false,
 })(MyApp);
+
+function getBaseUrl() {
+  if (typeof window) return ""; // Browser should use current path
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
+
+  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+}
