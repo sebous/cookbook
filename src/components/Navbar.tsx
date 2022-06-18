@@ -10,7 +10,7 @@ export const Navbar = () => {
   return (
     <div className="navbar">
       <div className="flex-1">
-        <Link href={session ? "/dashboard" : "/"}>
+        <Link href="/dashboard">
           <a className="btn btn-ghost normal-case text-xl">
             cookbook unbloatified
           </a>
