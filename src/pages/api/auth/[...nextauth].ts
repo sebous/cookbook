@@ -8,22 +8,24 @@ export default NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  // callbacks: {
-  //   async signIn({ user, account, profile, email, credentials }) {
-  //     console.log("sign in");
-  //     return true;
-  //   },
-  //   async redirect({ url, baseUrl }) {
-  //     console.log(`${baseUrl}/dashboard`);
-  //     return `${baseUrl}/dashboard`;
-  //   },
-  //   async session({ session, user, token }) {
-  //     console.log("session");
-  //     return session;
-  //   },
-  //   async jwt({ token, user, account, profile, isNewUser }) {
-  //     console.log("jwt");
-  //     return token;
-  //   },
-  // },
+  pages: {
+    signIn: "/auth/signin",
+  },
+  callbacks: {
+    // async signIn({ user, account, profile, email, credentials }) {
+    //   console.log("sign in");
+    //   return true;
+    // },
+    async redirect({ url, baseUrl }) {
+      return `${baseUrl}/dashboard`;
+    },
+    // async session({ session, user, token }) {
+    //   console.log("session");
+    //   return session;
+    // },
+    // async jwt({ token, user, account, profile, isNewUser }) {
+    //   console.log("jwt");
+    //   return token;
+    // },
+  },
 });

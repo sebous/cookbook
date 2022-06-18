@@ -13,7 +13,7 @@ export const AuthGuard = ({ children }: PropsWithChildren<{}>) => {
   }
 
   if (status === "unauthenticated") {
-    router.push("/signin");
+    router.push("/auth/signin");
   }
 
   if (session && status === "authenticated") {
