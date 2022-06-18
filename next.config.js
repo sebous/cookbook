@@ -4,7 +4,7 @@ const { withSuperjson } = require("next-superjson");
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["avatars.githubusercontent.com"],
+    domains: ["platform-lookaside.fbsbx.com"],
   },
 };
 
