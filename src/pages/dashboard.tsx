@@ -1,17 +1,15 @@
-import prisma from "@/backend/prisma";
 import { RecipeCard, UrlInput } from "@/components/dashboard";
 import { trpc } from "@/utils/trpc";
-import type { GetStaticPaths, NextPage } from "next";
 import Link from "next/link";
-import { useQueryClient } from "react-query";
+import type { NextAppPage } from "./_app";
 
-const Dashboard: NextPage = () => {
-  const queryClient = useQueryClient();
-  const recipes = trpc.useQuery(["all-recipes"]);
+const Dashboard: NextAppPage = () => {
+  const trpcUtils = trpc.useContext();
+  const recipes = trpc.useQuery(["recipe.getAll"], { staleTime: 60 });
 
-  const importRecipe = trpc.useMutation(["import-recipe"], {
+  const importRecipe = trpc.useMutation(["recipe.import"], {
     onSuccess: () => {
-      queryClient.invalidateQueries(["all-recipes"]);
+      trpcUtils.invalidateQueries(["recipe.getAll"]);
     },
   });
 
@@ -66,5 +64,7 @@ const Dashboard: NextPage = () => {
     </>
   );
 };
+
+Dashboard.requireAuth = true;
 
 export default Dashboard;

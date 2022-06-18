@@ -1,6 +1,7 @@
 import prisma from "@/backend/prisma";
 import type { inferAsyncReturnType } from "@trpc/server";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import type { NextAppPage } from "../_app";
 
 const getRecipeDetail = async (id: string) => {
   return prisma.recipe.findFirst({ where: { id } });
@@ -8,9 +9,9 @@ const getRecipeDetail = async (id: string) => {
 
 type RecipeQueryResult = inferAsyncReturnType<typeof getRecipeDetail>;
 
-const RecipePage: NextPage<{ recipe: NonNullable<RecipeQueryResult> }> = ({
-  recipe,
-}) => {
+const RecipePage: NextAppPage<{
+  recipe: NonNullable<RecipeQueryResult>;
+}> = ({ recipe }) => {
   return (
     <article className="prose">
       <h2>{recipe.name}</h2>
@@ -59,5 +60,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: "blocking",
   };
 };
+
+RecipePage.requireAuth = true;
 
 export default RecipePage;

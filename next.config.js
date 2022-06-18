@@ -3,13 +3,9 @@ const { withSuperjson } = require("next-superjson");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  redirects: async () => [
-    {
-      source: "/",
-      destination: "/dashboard",
-      permanent: true,
-    },
-  ],
+  images: {
+    domains: ["avatars.githubusercontent.com"],
+  },
 };
 
 module.exports = withSuperjson()(nextConfig);

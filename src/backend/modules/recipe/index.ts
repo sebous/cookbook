@@ -1,9 +1,9 @@
-import { AnyNode, Cheerio, CheerioAPI, load } from "cheerio";
-import { NodeHtmlMarkdown } from "node-html-markdown";
 import {
   INGREDIENTS_KEYWORDS,
   INSTRUCTIONS_KEYWORDS,
-} from "./constants/keywords";
+} from "@/backend/constants/keywords";
+import { AnyNode, Cheerio, CheerioAPI, load } from "cheerio";
+import { NodeHtmlMarkdown } from "node-html-markdown";
 import sanitizeHtml from "sanitize-html";
 
 interface RecipeDto {
@@ -49,7 +49,7 @@ function findRootForKeywords(keywords: string[], $: CheerioAPI) {
   return root;
 }
 
-export async function processRecipeUrl(url: string): Promise<RecipeDto> {
+async function processRecipeUrl(url: string): Promise<RecipeDto> {
   const response = await fetch(url);
   const data = await response.text();
 
@@ -88,3 +88,5 @@ function processResult(roots: Cheerio<AnyNode>[], name: string): RecipeDto {
     markdownBody: markdown,
   };
 }
+
+export const recipeModule = { processRecipeUrl };
