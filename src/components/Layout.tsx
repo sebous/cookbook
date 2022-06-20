@@ -3,11 +3,11 @@ import { Navbar } from "./Navbar";
 
 export const Layout = ({ children }: PropsWithChildren<{}>) => {
   return (
-    <>
+    <div className="bg-base-300">
       <Navbar />
-      <div className="container mx-auto min-h-[calc(100%-70px)] flex">
+      <div className="container mx-auto flex min-h-[calc(100vh-70px)]">
         {children}
       </div>
-    </>
+    </div>
   );
 };

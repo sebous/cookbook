@@ -1,9 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body,
-html,
-#__next {
-  @apply bg-base-300 h-full;
-}
