@@ -18,11 +18,11 @@ function MyApp(props: AppProps) {
   return (
     <SessionProvider session={pageProps.session}>
       {Component.requireAuth ? (
-        <AuthGuard>
-          <Layout>
+        <Layout>
+          <AuthGuard>
             <Component {...pageProps} />
-          </Layout>
-        </AuthGuard>
+          </AuthGuard>
+        </Layout>
       ) : (
         <Layout>
           <Component {...pageProps} />

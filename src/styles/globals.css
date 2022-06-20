@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 body,
-html {
-  @apply bg-base-300 min-h-screen;
+html,
+#__next {
+  @apply bg-base-300 h-full;
 }

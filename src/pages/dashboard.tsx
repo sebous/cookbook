@@ -1,4 +1,5 @@
 import { RecipeCard, UrlInput } from "@/components/dashboard";
+import { Loader } from "@/components/layout/Loader";
 import { trpc } from "@/utils/trpc";
 import Link from "next/link";
 import type { NextAppPage } from "./_app";
@@ -14,11 +15,11 @@ const Dashboard: NextAppPage = () => {
   });
 
   if (!recipes.data) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (
-    <>
+    <div className="flex-1">
       <div className="container mx-auto mb-8 flex">
         <UrlInput
           submitFn={(url) => importRecipe.mutate({ url })}
@@ -61,7 +62,7 @@ const Dashboard: NextAppPage = () => {
           </Link>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

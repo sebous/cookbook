@@ -1,5 +1,6 @@
 import { getProviders, signIn } from "next-auth/react";
 import type { InferGetServerSidePropsType } from "next";
+import { BoxFullCenter } from "@/components/layout/BoxFullCenter";
 
 export const getServerSideProps = async () => {
   const providers = await getProviders();
@@ -13,16 +14,15 @@ export const getServerSideProps = async () => {
 const SignInPage = ({
   providers,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  console.log(providers);
   return (
-    <div className="flex justify-center p-16">
+    <BoxFullCenter>
       <button
         className="btn center"
         onClick={() => signIn(providers?.facebook?.id)}
       >
-        sign in fb
+        login via FB
       </button>
-    </div>
+    </BoxFullCenter>
   );
 };
 

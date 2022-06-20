@@ -5,7 +5,9 @@ export const Layout = ({ children }: PropsWithChildren<{}>) => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto mt-8">{children}</div>
+      <div className="container mx-auto min-h-[calc(100%-70px)] flex">
+        {children}
+      </div>
     </>
   );
 };
