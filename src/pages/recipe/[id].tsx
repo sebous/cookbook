@@ -51,12 +51,8 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const recipes = await prisma.recipe.findMany({
-    select: { id: true },
-  });
-
   return {
-    paths: recipes.map((r) => ({ params: { id: r.id } })),
+    paths: [],
     fallback: "blocking",
   };
 };
