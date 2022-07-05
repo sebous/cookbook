@@ -14,47 +14,52 @@ export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
 
   return (
     <>
-      <input
-        className={`input input-bordered ${
-          isUrlInvalid ? "input-error" : ""
-        } flex-1 mr-2 text-lg`}
-        type="text"
-        ref={inputRef}
-        placeholder="paste your url (https://some-bloated-cookbook.com/history-of-rice)"
-        value={url}
-        onChange={(e) => setUrl(e.currentTarget.value)}
-      />
-
-      <button
-        className="btn btn-square mr-8"
-        onClick={() => {
-          setUrl("");
-          inputRef.current?.focus();
-        }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <div className="flex-1 mr-2">
+        <input
+          className={`input input-bordered ${
+            isUrlInvalid ? "input-error" : ""
+          } text-lg w-full`}
+          type="text"
+          ref={inputRef}
+          placeholder="paste your url (https://some-bloated-cookbook.com/history-of-rice)"
+          value={url}
+          onChange={(e) => setUrl(e.currentTarget.value)}
+        />
+      </div>
+      <div className="flex align-middle">
+        <button
+          className="btn btn-square mr-8 hidden md:flex"
+          onClick={() => {
+            setUrl("");
+            inputRef.current?.focus();
+          }}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-      <button
-        className={`btn btn-primary ${isLoading ? "loading" : ""}`}
-        disabled={isUrlInvalid || url === ""}
-        type="button"
-        onClick={() => submitFn(url)}
-      >
-        {"process"}
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <button
+          className={`btn btn-primary w-full md:w-min mt-4 md:mt-0 ${
+            isLoading ? "loading" : ""
+          }`}
+          disabled={isUrlInvalid || url === ""}
+          type="button"
+          onClick={() => submitFn(url)}
+        >
+          {"process"}
+        </button>
+      </div>
     </>
   );
 };

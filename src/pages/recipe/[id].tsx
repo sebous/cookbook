@@ -13,7 +13,7 @@ const RecipePage: NextAppPage<{
   recipe: NonNullable<RecipeQueryResult>;
 }> = ({ recipe }) => {
   return (
-    <article className="prose">
+    <article className="prose pl-2 pr-2">
       <h2>{recipe.name}</h2>
       <div
         dangerouslySetInnerHTML={{ __html: recipe.htmlBody }}

@@ -22,7 +22,7 @@ const Dashboard: NextAppPage = () => {
 
   return (
     <div className="flex-1">
-      <div className="container mx-auto mb-8 flex">
+      <div className="container mx-auto mb-8 flex flex-col md:flex-row">
         <UrlInput
           submitFn={(url) => importRecipe.mutate({ url })}
           isLoading={importRecipe.isLoading}
