@@ -11,8 +11,8 @@ export const Navbar = () => {
     <div className="navbar md:sticky bg-base-300 top-0 z-50">
       <div className="flex-1">
         <Link href="/dashboard">
-          <a className="btn btn-ghost normal-case text-xl">
-            cookbook unbloatified
+          <a className="btn btn-ghost normal-case text-2xl font-normal">
+            cookbook w/o bloat
           </a>
         </Link>
       </div>

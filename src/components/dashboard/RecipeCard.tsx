@@ -5,10 +5,9 @@ interface Props {
 
 export const RecipeCard = ({ name }: Props) => {
   return (
-    <div className="card w-full bg-base-100 shadow-lg mb-4">
+    <div className="card-compact card w-full bg-base-100 shadow-lg mb-4 rounded-lg">
       <div className="card-body">
-        <h2 className="card-title">{name}</h2>
-        {/* <p>text...</p> */}
+        <h4 className="text-sm md:text-xl mb-0 font-normal">{name}</h4>
       </div>
     </div>
   );
