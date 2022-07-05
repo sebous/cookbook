@@ -8,7 +8,7 @@ export const Navbar = () => {
   const userImg = session?.user?.image;
 
   return (
-    <div className="navbar sticky top-0 z-50">
+    <div className="navbar md:sticky bg-base-300 top-0 z-50">
       <div className="flex-1">
         <Link href="/dashboard">
           <a className="btn btn-ghost normal-case text-xl">

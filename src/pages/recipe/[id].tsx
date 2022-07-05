@@ -44,6 +44,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     };
   }
 
+  // using ISR
   return {
     props: { recipe },
     revalidate: 60 * 60,
