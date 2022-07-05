@@ -6,11 +6,13 @@ import type { NextAppPage } from "./_app";
 
 const Dashboard: NextAppPage = () => {
   const trpcUtils = trpc.useContext();
-  const recipes = trpc.useQuery(["recipe.getAll"], { staleTime: 60 });
+  const recipes = trpc.useQuery(["recipe.getAllForCurrentUser"], {
+    staleTime: 60,
+  });
 
   const importRecipe = trpc.useMutation(["recipe.import"], {
     onSuccess: () => {
-      trpcUtils.invalidateQueries(["recipe.getAll"]);
+      trpcUtils.invalidateQueries(["recipe.getAllForCurrentUser"]);
     },
   });
 

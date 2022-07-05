@@ -5,7 +5,16 @@ import {
 import { AnyNode, Cheerio, CheerioAPI, load } from "cheerio";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import sanitizeHtml from "sanitize-html";
-import puppeteer from "puppeteer";
+
+let puppeteer: any;
+let chrome: any;
+
+if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+  chrome = require("chrome-aws-lambda");
+  puppeteer = require("puppeteer-core");
+} else {
+  puppeteer = require("puppeteer");
+}
 
 interface RecipeDto {
   name: string;
@@ -47,7 +56,17 @@ function findRootForKeywords(keywords: string[], $: CheerioAPI) {
 }
 
 async function getHtml(url: string) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch(
+    process.env.AWS_LAMBDA_FUNCTION_VERSION
+      ? {
+          args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
+          defaultViewport: chrome.defaultViewport,
+          executablePath: await chrome.executablePath,
+          headless: true,
+          ignoreHTTPSErrors: true,
+        }
+      : undefined
+  );
   const page = await browser.newPage();
   await page.goto(url);
   const content = await page.content();

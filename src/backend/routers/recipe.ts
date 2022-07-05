@@ -13,6 +13,19 @@ export const recipeRouter = createRouter()
       return recipes;
     },
   })
+  .query("getAllForCurrentUser", {
+    async resolve({ ctx }) {
+      if (!ctx?.session?.user?.email) {
+        throw "user not logged in";
+      }
+
+      const recipes = await prisma.recipe.findMany({
+        select: { id: true, name: true },
+        where: { userId: ctx.session.user.email },
+      });
+      return recipes;
+    },
+  })
   .query("getDetail", {
     input: z.object({
       id: z.string(),
@@ -28,7 +41,7 @@ export const recipeRouter = createRouter()
     input: z.object({
       url: z.string().url(),
     }),
-    async resolve({ input }) {
+    async resolve({ input, ctx }) {
       const duplicate = await prisma.recipe.findFirst({
         where: {
           url: input.url,
@@ -42,6 +55,7 @@ export const recipeRouter = createRouter()
           ...processedRecipe,
           url: input.url,
           parsedName: processedRecipe.name,
+          userId: ctx!.session!.user!.email!,
         },
       });
       return created;
