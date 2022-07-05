@@ -5,19 +5,12 @@ import {
 import { AnyNode, Cheerio, CheerioAPI, load } from "cheerio";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import sanitizeHtml from "sanitize-html";
+import puppeteer from "puppeteer";
 
 interface RecipeDto {
   name: string;
   htmlBody: string;
   markdownBody: string;
-}
-
-function checkKeywords(el: Cheerio<AnyNode>, keywords: string[]) {
-  const $ = load(el.html()!);
-  const searchedElements = $("*")
-    .toArray()
-    .filter((el) => keywords.includes($(el).text().toLowerCase()));
-  return searchedElements.length > 0;
 }
 
 function findCorrectParentElRecursively(
@@ -38,38 +31,46 @@ function findCorrectParentElRecursively(
 function findRootForKeywords(keywords: string[], $: CheerioAPI) {
   const searchElements = $("*")
     .toArray()
-    .filter((el) => INGREDIENTS_KEYWORDS.includes($(el).text().toLowerCase()));
+    .filter((el) => keywords.includes($(el).text().toLowerCase()));
 
   if (searchElements.length === 0) {
-    throw "mfs be lazyloading their shit, fix incoming";
+    throw "recipe is weirdly loading content, try different one please";
   }
 
-  const root = findCorrectParentElRecursively($(searchElements[0]).parent());
-  if (!root) throw `keywords: [${keywords.join(", ")}] not found in html :/`;
-  return root;
+  const roots = searchElements.map((el) =>
+    findCorrectParentElRecursively($(el).parent())
+  );
+
+  if (!roots || roots.length === 0)
+    throw `keywords: [${keywords.join(", ")}] not found in html :/`;
+  return roots;
+}
+
+async function getHtml(url: string) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url);
+  const content = await page.content();
+  await browser.close();
+  return content;
 }
 
 async function processRecipeUrl(url: string): Promise<RecipeDto> {
-  const response = await fetch(url);
-  const data = await response.text();
+  const data = await getHtml(url);
 
-  const name = load(data)("head > title").text();
+  const name = load(data)("head > title").text() || load(data)("title").text();
   let $ = load(sanitizeHtml(data));
 
-  const ingredientsRoot = findRootForKeywords(INGREDIENTS_KEYWORDS, $);
+  const ingredientsRoots = findRootForKeywords(INGREDIENTS_KEYWORDS, $);
+  const instructionsRoots = findRootForKeywords(INSTRUCTIONS_KEYWORDS, $);
 
-  const includesInstructions = checkKeywords(
-    ingredientsRoot,
-    INSTRUCTIONS_KEYWORDS
+  return processResult(
+    [
+      ...ingredientsRoots.filter((x): x is Cheerio<AnyNode> => !!x),
+      ...instructionsRoots.filter((x): x is Cheerio<AnyNode> => !!x),
+    ],
+    name
   );
-
-  if (includesInstructions) {
-    return processResult([ingredientsRoot], name);
-  }
-
-  const instructionsRoot = findRootForKeywords(INSTRUCTIONS_KEYWORDS, $);
-
-  return processResult([ingredientsRoot, instructionsRoot], name);
 }
 
 function processResult(roots: Cheerio<AnyNode>[], name: string): RecipeDto {
@@ -79,6 +80,7 @@ function processResult(roots: Cheerio<AnyNode>[], name: string): RecipeDto {
 
   const html = htmlParts
     .filter((x): x is string => !!x)
+    .filter((x, i, arr) => arr.indexOf(x) === i)
     .reduce((result, part) => result + part, "");
 
   const markdown = NodeHtmlMarkdown.translate(html);
