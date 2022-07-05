@@ -6,16 +6,6 @@ import { AnyNode, Cheerio, CheerioAPI, load } from "cheerio";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import sanitizeHtml from "sanitize-html";
 
-let puppeteer: any;
-let chrome: any;
-
-if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-  chrome = require("chrome-aws-lambda");
-  puppeteer = require("puppeteer-core");
-} else {
-  puppeteer = require("puppeteer");
-}
-
 interface RecipeDto {
   name: string;
   htmlBody: string;
@@ -55,27 +45,9 @@ function findRootForKeywords(keywords: string[], $: CheerioAPI) {
   return roots;
 }
 
-async function getHtml(url: string) {
-  const browser = await puppeteer.launch(
-    process.env.AWS_LAMBDA_FUNCTION_VERSION
-      ? {
-          args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
-          defaultViewport: chrome.defaultViewport,
-          executablePath: await chrome.executablePath,
-          headless: true,
-          ignoreHTTPSErrors: true,
-        }
-      : undefined
-  );
-  const page = await browser.newPage();
-  await page.goto(url);
-  const content = await page.content();
-  await browser.close();
-  return content;
-}
-
 async function processRecipeUrl(url: string): Promise<RecipeDto> {
-  const data = await getHtml(url);
+  const response = await fetch(url);
+  const data = await response.text();
 
   const name = load(data)("head > title").text() || load(data)("title").text();
   let $ = load(sanitizeHtml(data));
