@@ -38,6 +38,18 @@ export const recipeRouter = createRouter()
       return recipe;
     },
   })
+  .mutation("delete", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input }) {
+      const deleted = await prisma.recipe.delete({
+        where: { id: input.id },
+        select: { id: true, name: true },
+      });
+      return deleted;
+    },
+  })
   .mutation("import", {
     input: z.object({
       url: z.string().url(),

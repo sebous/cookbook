@@ -15,6 +15,17 @@ const Dashboard: NextAppPage = () => {
       trpcUtils.invalidateQueries(["recipe.getAllForCurrentUser"]);
     },
   });
+  const deleteRecipe = trpc.useMutation(["recipe.delete"], {
+    onSuccess: () => {
+      trpcUtils.invalidateQueries(["recipe.getAllForCurrentUser"]);
+    },
+    onMutate: async ({ id }) => {
+      await trpcUtils.cancelQuery(["recipe.getAllForCurrentUser"]);
+      trpcUtils.setQueryData(["recipe.getAllForCurrentUser"], (recipes) =>
+        recipes ? recipes.filter((r) => r.id !== id) : []
+      );
+    },
+  });
 
   if (!recipes.data) {
     return <Loader />;
@@ -59,7 +70,10 @@ const Dashboard: NextAppPage = () => {
         {recipes.data.map((r) => (
           <Link href={`/recipe/${r.id}`} key={r.id}>
             <a>
-              <RecipeCard name={r.name} />
+              <RecipeCard
+                name={r.name}
+                deleteFn={() => deleteRecipe.mutate({ id: r.id })}
+              />
             </a>
           </Link>
         ))}
