@@ -14,7 +14,7 @@ export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
 
   return (
     <>
-      <div className="flex-1 mr-2">
+      <div className="flex-1 mr-2 flex align-middle">
         <input
           className={`input input-bordered ${
             isUrlInvalid ? "input-error" : ""
@@ -25,8 +25,23 @@ export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
           value={url}
           onChange={(e) => setUrl(e.currentTarget.value)}
         />
-      </div>
-      <div className="flex align-middle">
+        <button
+          className="btn btn-square mr-2 ml-2"
+          onClick={async () => {
+            const text = await navigator.clipboard.readText();
+            setUrl(text);
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+          </svg>
+        </button>
         <button
           className="btn btn-square mr-8 hidden md:flex"
           onClick={() => {
@@ -49,8 +64,11 @@ export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
             />
           </svg>
         </button>
+      </div>
+      <div className="flex align-middle"></div>
+      <div>
         <button
-          className={`btn btn-primary w-full md:w-min mt-4 md:mt-0 ${
+          className={`btn btn-primary btn-block md:flex-1 mt-4 md:mt-0 ${
             isLoading ? "loading" : ""
           }`}
           disabled={isUrlInvalid || url === ""}

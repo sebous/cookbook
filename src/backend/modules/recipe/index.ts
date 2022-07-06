@@ -33,7 +33,7 @@ function findRootForKeywords(keywords: string[], $: CheerioAPI) {
     .filter((el) => keywords.includes($(el).text().toLowerCase()));
 
   if (searchElements.length === 0) {
-    throw "recipe is weirdly loading content, try different one please";
+    throw "this type of recipe is not supported, try different one please";
   }
 
   const roots = searchElements.map((el) =>
@@ -42,6 +42,7 @@ function findRootForKeywords(keywords: string[], $: CheerioAPI) {
 
   if (!roots || roots.length === 0)
     throw `keywords: [${keywords.join(", ")}] not found in html :/`;
+
   return roots;
 }
 
@@ -50,7 +51,7 @@ async function processRecipeUrl(url: string): Promise<RecipeDto> {
   const data = await response.text();
 
   const name = load(data)("head > title").text() || load(data)("title").text();
-  let $ = load(sanitizeHtml(data));
+  const $ = load(sanitizeHtml(data));
 
   const ingredientsRoots = findRootForKeywords(INGREDIENTS_KEYWORDS, $);
   const instructionsRoots = findRootForKeywords(INSTRUCTIONS_KEYWORDS, $);

@@ -22,6 +22,7 @@ export const recipeRouter = createRouter()
       const recipes = await prisma.recipe.findMany({
         select: { id: true, name: true },
         where: { userId: ctx.session.user.email },
+        orderBy: { createdAt: "desc" },
       });
       return recipes;
     },
