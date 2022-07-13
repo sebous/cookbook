@@ -1,9 +1,21 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createRouter } from "../createRouter";
 import { recipeModule } from "../modules/recipe";
 import prisma from "../prisma";
 
 export const recipeRouter = createRouter()
+  .middleware(async ({ ctx, next }) => {
+    if (!ctx.session?.user?.email) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        ...ctx,
+        userId: ctx.session.user.email,
+      },
+    });
+  })
   .query("getAll", {
     input: z.undefined(),
     async resolve() {
@@ -15,13 +27,9 @@ export const recipeRouter = createRouter()
   })
   .query("getAllForCurrentUser", {
     async resolve({ ctx }) {
-      if (!ctx?.session?.user?.email) {
-        throw "user not logged in";
-      }
-
       const recipes = await prisma.recipe.findMany({
         select: { id: true, name: true },
-        where: { userId: ctx.session.user.email },
+        where: { userId: ctx.userId },
         orderBy: { createdAt: "desc" },
       });
       return recipes;
@@ -42,12 +50,10 @@ export const recipeRouter = createRouter()
     input: z.object({
       id: z.string(),
     }),
-    async resolve({ input }) {
-      const deleted = await prisma.recipe.delete({
-        where: { id: input.id },
-        select: { id: true, name: true },
+    async resolve({ input, ctx }) {
+      await prisma.recipe.deleteMany({
+        where: { id: input.id, userId: ctx.userId },
       });
-      return deleted;
     },
   })
   .mutation("import", {
@@ -58,6 +64,7 @@ export const recipeRouter = createRouter()
       const duplicate = await prisma.recipe.findFirst({
         where: {
           url: input.url,
+          userId: ctx.userId,
         },
       });
       if (duplicate) throw "duplicate recipe";
@@ -68,7 +75,7 @@ export const recipeRouter = createRouter()
           ...processedRecipe,
           url: input.url,
           parsedName: processedRecipe.name,
-          userId: ctx!.session!.user!.email!,
+          userId: ctx.userId,
         },
       });
       return created;
