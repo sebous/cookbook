@@ -58,6 +58,4 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-RecipePage.requireAuth = true;
-
 export default RecipePage;

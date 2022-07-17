@@ -5,6 +5,17 @@ import { recipeModule } from "../modules/recipe";
 import prisma from "../prisma";
 
 export const recipeRouter = createRouter()
+  .query("getDetail", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input }) {
+      const recipe = await prisma.recipe.findFirst({
+        where: { id: input.id },
+      });
+      return recipe;
+    },
+  })
   .middleware(async ({ ctx, next }) => {
     if (!ctx.session?.user?.email) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -17,7 +28,6 @@ export const recipeRouter = createRouter()
     });
   })
   .query("getAll", {
-    input: z.undefined(),
     async resolve() {
       const recipes = await prisma.recipe.findMany({
         select: { id: true, name: true },
@@ -33,17 +43,6 @@ export const recipeRouter = createRouter()
         orderBy: { createdAt: "desc" },
       });
       return recipes;
-    },
-  })
-  .query("getDetail", {
-    input: z.object({
-      id: z.string(),
-    }),
-    async resolve({ input }) {
-      const recipe = await prisma.recipe.findFirst({
-        where: { id: input.id },
-      });
-      return recipe;
     },
   })
   .mutation("delete", {
