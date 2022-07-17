@@ -1,30 +1,38 @@
 import { Reorder, useMotionValue, animate, MotionValue } from "framer-motion";
 import Link from "next/link";
 import React, { useEffect } from "react";
+import useBreakpoint from "use-breakpoint";
 interface Props {
   name: string;
   id: string;
   deleteFn: () => void;
 }
+const BREAKPOINTS = { mobile: 0, desktop: 1024 };
 
 export const RecipeCard = ({ name, deleteFn, id }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
+  const { breakpoint } = useBreakpoint(BREAKPOINTS);
 
   return (
-    <Reorder.Item value={id} id={id} style={{ y, boxShadow }}>
+    <Reorder.Item
+      value={id}
+      id={id}
+      style={{ y, boxShadow }}
+      dragListener={breakpoint === "desktop"}
+    >
       <div className="card-compact card w-full bg-base-100 shadow-lg mb-4 rounded-lg">
-        <div className="card-body flex flex-row align-middle">
-          <Link href={`/recipe/${id}`}>
+        <div className="card-body flex flex-row items-center">
+          <Link href={`/recipe/${id}`} className="">
             <a>
-              <h4 className="text-sm md:text-xl mb-0 font-normal flex-1 pr-8">
+              <h4 className="text-sm md:text-xl mb-0 font-normal pr-8">
                 {name}
               </h4>
             </a>
           </Link>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 ml-auto"
+            className="h-6 w-6 ml-auto flex-shrink-0"
             fill="none"
             cursor={"pointer"}
             viewBox="0 0 24 24"

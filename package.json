@@ -30,6 +30,7 @@
     "react-query": "^3.39.0",
     "sanitize-html": "^2.7.0",
     "superjson": "^1.9.1",
+    "use-breakpoint": "^3.0.3",
     "ws": "^8.6.0",
     "zod": "^3.16.0"
   },

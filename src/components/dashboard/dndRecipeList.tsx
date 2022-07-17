@@ -1,7 +1,8 @@
 import { useDebounce } from "@/utils/hooks/useDebounce";
 import { trpc } from "@/utils/trpc";
-import { Reorder } from "framer-motion";
+import { MotionConfig, Reorder } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useBreakpoint } from "use-breakpoint";
 import { Loader } from "../layout/Loader";
 import { RecipeCard } from "./RecipeCard";
 
@@ -42,13 +43,18 @@ export const DndRecipeList = () => {
 
   const debouncedReorder = useDebounce(reorder.mutate, 600);
 
-  const [recipeOrder, setRecipeOrder] = useState<
+  // track the current order of the recipes
+  const [localRecipesOrdered, setLocalRecipesOrdered] = useState<
     NonNullable<typeof recipes["data"]>
   >([]);
 
+  // sync the local order with the server data
   useEffect(() => {
     if (recipes.data) {
-      setRecipeOrder((orderedRecipes) => {
+      setLocalRecipesOrdered((orderedRecipes) => {
+        if (orderedRecipes.length === 0) {
+          return recipes.data;
+        }
         return [
           ...orderedRecipes.filter((x) =>
             recipes.data.map((r) => r.id).includes(x.id)
@@ -61,7 +67,7 @@ export const DndRecipeList = () => {
     }
   }, [recipes.data]);
 
-  if (!recipeOrder) {
+  if (localRecipesOrdered.length === 0) {
     return <Loader />;
   }
 
@@ -69,17 +75,17 @@ export const DndRecipeList = () => {
     <div className="container mx-auto">
       <Reorder.Group
         axis="y"
-        values={recipeOrder.map((x) => x.id)}
+        values={localRecipesOrdered.map((x) => x.id)}
+        onDrag={(e) => console.log(e)}
         onReorder={(ids: string[]) => {
-          if (!recipeOrder) return;
-          const newOrder = [...recipeOrder];
-          newOrder!.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
-          setRecipeOrder(newOrder);
+          if (!localRecipesOrdered) return;
+          const newOrder = [...localRecipesOrdered];
+          newOrder.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+          setLocalRecipesOrdered(newOrder);
           debouncedReorder(newOrder.map((x, i) => ({ id: x.id, order: i })));
         }}
-        onDragEnd={() => console.log("end")}
       >
-        {recipeOrder.map((r) => (
+        {localRecipesOrdered.map((r) => (
           <RecipeCard
             deleteFn={() => deleteRecipe.mutate({ id: r.id })}
             key={r.id}
