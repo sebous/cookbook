@@ -1,8 +1,7 @@
 import { useDebounce } from "@/utils/hooks/useDebounce";
 import { trpc } from "@/utils/trpc";
-import { MotionConfig, Reorder } from "framer-motion";
+import { Reorder } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useBreakpoint } from "use-breakpoint";
 import { Loader } from "../layout/Loader";
 import { RecipeCard } from "./RecipeCard";
 

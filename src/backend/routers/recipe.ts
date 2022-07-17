@@ -97,12 +97,21 @@ export const recipeRouter = createRouter()
       if (duplicate) throw "duplicate recipe";
 
       const processedRecipe = await recipeModule.processRecipeUrl(input.url);
+
+      const maxOrderAggr = await prisma.recipe.aggregate({
+        _max: { order: true },
+        where: { userId: ctx.userId },
+      });
+      const { order: maxOrder } = maxOrderAggr._max;
+
       const created = await prisma.recipe.create({
         data: {
           ...processedRecipe,
           url: input.url,
           parsedName: processedRecipe.name,
           userId: ctx.userId,
+          // if recipes are ordered, make new item last
+          order: typeof maxOrder === "number" ? maxOrder + 1 : null,
         },
       });
       return created;
