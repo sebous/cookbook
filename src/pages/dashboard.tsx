@@ -1,5 +1,4 @@
-import { UrlInput } from "@/components/dashboard";
-import { DndRecipeList } from "@/components/dashboard/dndRecipeList";
+import { DndRecipeList, UrlInput } from "@/components/dashboard";
 import { trpc } from "@/utils/trpc";
 import type { NextAppPage } from "./_app";
 
