@@ -19,6 +19,7 @@ model Recipe {
   markdownBody String
   url          String
   userNotes    String?
+  order        Int?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

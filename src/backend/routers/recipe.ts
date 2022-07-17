@@ -38,9 +38,9 @@ export const recipeRouter = createRouter()
   .query("getAllForCurrentUser", {
     async resolve({ ctx }) {
       const recipes = await prisma.recipe.findMany({
-        select: { id: true, name: true },
+        select: { id: true, name: true, order: true },
         where: { userId: ctx.userId },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
       });
       return recipes;
     },
@@ -53,6 +53,34 @@ export const recipeRouter = createRouter()
       await prisma.recipe.deleteMany({
         where: { id: input.id, userId: ctx.userId },
       });
+    },
+  })
+  .mutation("order", {
+    input: z.array(z.object({ id: z.string(), order: z.number().min(0) })),
+    async resolve({ ctx, input }) {
+      const recipes = await prisma.recipe.findMany({
+        select: { id: true },
+        where: { userId: ctx.userId },
+      });
+
+      const dbRecipeIds = recipes.map((r) => r.id);
+
+      if (
+        input.length !== dbRecipeIds.length ||
+        input.some((x) => !dbRecipeIds.includes(x.id))
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "requested recipe ids to order not matching recipe ids in db",
+        });
+      }
+
+      await prisma.$transaction(
+        input.map((x) =>
+          prisma.recipe.update({ where: { id: x.id }, data: { ...x } })
+        )
+      );
     },
   })
   .mutation("import", {

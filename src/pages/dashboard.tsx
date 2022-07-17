@@ -1,35 +1,15 @@
-import { RecipeCard, UrlInput } from "@/components/dashboard";
-import { Loader } from "@/components/layout/Loader";
+import { DndRecipeList, UrlInput } from "@/components/dashboard";
 import { trpc } from "@/utils/trpc";
-import Link from "next/link";
 import type { NextAppPage } from "./_app";
 
 const Dashboard: NextAppPage = () => {
   const trpcUtils = trpc.useContext();
-  const recipes = trpc.useQuery(["recipe.getAllForCurrentUser"], {
-    staleTime: 60,
-  });
 
   const importRecipe = trpc.useMutation(["recipe.import"], {
     onSuccess: () => {
       trpcUtils.invalidateQueries(["recipe.getAllForCurrentUser"]);
     },
   });
-  const deleteRecipe = trpc.useMutation(["recipe.delete"], {
-    onSuccess: () => {
-      trpcUtils.invalidateQueries(["recipe.getAllForCurrentUser"]);
-    },
-    onMutate: async ({ id }) => {
-      await trpcUtils.cancelQuery(["recipe.getAllForCurrentUser"]);
-      trpcUtils.setQueryData(["recipe.getAllForCurrentUser"], (recipes) =>
-        recipes ? recipes.filter((r) => r.id !== id) : []
-      );
-    },
-  });
-
-  if (!recipes.data) {
-    return <Loader />;
-  }
 
   return (
     <div className="flex-1">
@@ -66,18 +46,7 @@ const Dashboard: NextAppPage = () => {
           </div>
         </div>
       )}
-      <div className="container mx-auto">
-        {recipes.data.map((r) => (
-          <Link href={`/recipe/${r.id}`} key={r.id}>
-            <a>
-              <RecipeCard
-                name={r.name}
-                deleteFn={() => deleteRecipe.mutate({ id: r.id })}
-              />
-            </a>
-          </Link>
-        ))}
-      </div>
+      <DndRecipeList />
     </div>
   );
 };
