@@ -27,7 +27,10 @@ function findCorrectParentElRecursively(
   return findCorrectParentElRecursively(parent);
 }
 
-function findRootForKeywords(keywords: string[], $: CheerioAPI) {
+/**
+ * finds all the html roots for provided keywords
+ */
+function findRootsForKeywords(keywords: string[], $: CheerioAPI) {
   const searchElements = $("*")
     .toArray()
     .filter((el) => keywords.includes($(el).text().toLowerCase()));
@@ -46,25 +49,6 @@ function findRootForKeywords(keywords: string[], $: CheerioAPI) {
   return roots;
 }
 
-async function processRecipeUrl(url: string): Promise<RecipeDto> {
-  const response = await fetch(url);
-  const data = await response.text();
-
-  const name = load(data)("head > title").text() || load(data)("title").text();
-  const $ = load(sanitizeHtml(data));
-
-  const ingredientsRoots = findRootForKeywords(INGREDIENTS_KEYWORDS, $);
-  const instructionsRoots = findRootForKeywords(INSTRUCTIONS_KEYWORDS, $);
-
-  return processResult(
-    [
-      ...ingredientsRoots.filter((x): x is Cheerio<AnyNode> => !!x),
-      ...instructionsRoots.filter((x): x is Cheerio<AnyNode> => !!x),
-    ],
-    name
-  );
-}
-
 function processResult(roots: Cheerio<AnyNode>[], name: string): RecipeDto {
   const htmlParts = roots.map((r) => r.html());
   if (htmlParts.some((x) => !x))
@@ -81,6 +65,25 @@ function processResult(roots: Cheerio<AnyNode>[], name: string): RecipeDto {
     htmlBody: html,
     markdownBody: markdown,
   };
+}
+
+async function processRecipeUrl(url: string): Promise<RecipeDto> {
+  const response = await fetch(url);
+  const data = await response.text();
+
+  const name = load(data)("head > title").text() || load(data)("title").text();
+  const $ = load(sanitizeHtml(data));
+
+  const ingredientsRoots = findRootsForKeywords(INGREDIENTS_KEYWORDS, $);
+  const instructionsRoots = findRootsForKeywords(INSTRUCTIONS_KEYWORDS, $);
+
+  return processResult(
+    [
+      ...ingredientsRoots.filter((x): x is Cheerio<AnyNode> => !!x),
+      ...instructionsRoots.filter((x): x is Cheerio<AnyNode> => !!x),
+    ],
+    name
+  );
 }
 
 export const recipeModule = { processRecipeUrl };

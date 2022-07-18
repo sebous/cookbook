@@ -43,7 +43,7 @@ export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
           </svg>
         </button>
         <button
-          className="btn btn-square mr-8 hidden md:flex"
+          className="btn btn-square hidden md:flex"
           onClick={() => {
             setUrl("");
             inputRef.current?.focus();
@@ -68,7 +68,7 @@ export const UrlInput = ({ isLoading, submitFn }: UrlInputProps) => {
       <div className="flex align-middle"></div>
       <div>
         <button
-          className={`btn btn-primary btn-block md:flex-1 mt-4 md:mt-0 ${
+          className={`btn btn-primary btn-block md:flex-1 mt-4 md:mt-0 min-w-16 px-8 ${
             isLoading ? "loading" : ""
           }`}
           disabled={isUrlInvalid || url === ""}
