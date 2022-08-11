@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -31,7 +31,7 @@ export const Navbar = () => {
             tabIndex={0}
             className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
           >
-            <li>
+            {/* <li>
               <a className="justify-between">
                 Profile
                 <span className="badge">todo</span>
@@ -42,11 +42,10 @@ export const Navbar = () => {
                 Settings
                 <span className="badge">todo</span>
               </a>
-            </li>
+            </li> */}
             <li>
-              <a className="justify-between">
+              <a className="justify-between" onClick={() => signOut()}>
                 Logout
-                <span className="badge">todo</span>
               </a>
             </li>
           </ul>
