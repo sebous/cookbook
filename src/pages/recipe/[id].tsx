@@ -1,4 +1,5 @@
 import prisma from "@/backend/prisma";
+import { ShareBtn } from "@/components/ShareBtn";
 import type { inferAsyncReturnType } from "@trpc/server";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import type { NextAppPage } from "../_app";
@@ -14,7 +15,12 @@ const RecipePage: NextAppPage<{
 }> = ({ recipe }) => {
   return (
     <article className="prose pl-2 pr-2">
-      <h2>{recipe.name}</h2>
+      <div className="flex flex-row items-center">
+        <h2>{recipe.name}</h2>
+        <div className="flex-1">
+          <ShareBtn />
+        </div>
+      </div>
       <div
         dangerouslySetInnerHTML={{ __html: recipe.htmlBody }}
         className="pb-8"
