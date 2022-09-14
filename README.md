@@ -1,4 +1,6 @@
 # Cookbook w/o bloat
+> recipe parsing logic is still under development, some recipes might not work, things can change
+
 - Purpose of this webapp is to remove bloat from recipes and save them for future use. 
 - Saves a lot of scrolling time while cooking 😄
 - Just paste recipe url and recipe will be saved as markdown for future use.
