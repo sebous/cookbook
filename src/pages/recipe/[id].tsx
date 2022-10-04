@@ -14,7 +14,7 @@ const RecipePage: NextAppPage<{
   recipe: NonNullable<RecipeQueryResult>;
 }> = ({ recipe }) => {
   return (
-    <article className="prose pl-2 pr-2">
+    <article className="prose pl-2 pr-2 lg:text-lg lg:max-w-[80ch]">
       <div className="flex flex-row items-center">
         <h2>{recipe.name}</h2>
         <div className="flex-1">
