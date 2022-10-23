@@ -75,7 +75,6 @@ export const DndRecipeList = () => {
       <Reorder.Group
         axis="y"
         values={localRecipesOrdered.map((x) => x.id)}
-        onDrag={(e) => console.log(e)}
         onReorder={(ids: string[]) => {
           if (!localRecipesOrdered) return;
           const newOrder = [...localRecipesOrdered];

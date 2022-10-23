@@ -4,9 +4,9 @@ import { recipeRouter } from "./recipe";
 
 export const appRouter = createRouter()
   .transformer(superjson)
-  .query("hello", {
+  .query("ping", {
     resolve() {
-      return "henlo!";
+      return "pong";
     },
   })
   .merge("recipe.", recipeRouter);

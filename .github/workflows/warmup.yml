@@ -1,0 +1,9 @@
+name: Warmup serverless fn
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+jobs:
+  ping_prod:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl '${{ env.PROD_URL }}/api/ping
