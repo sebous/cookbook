@@ -6,4 +6,4 @@ jobs:
   ping_prod:
     runs-on: ubuntu-latest
     steps:
-      - run: curl '${{ secrets.PROD_URL }}/api/ping'
+      - run: curl 'https://cookbook-sebous.vercel.app/api/ping'
