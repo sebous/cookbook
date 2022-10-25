@@ -1,4 +1,5 @@
 # Cookbook w/o bloat
+![Vercel](https://vercelbadge.vercel.app/api/sebous/cookbook)
 > recipe parsing logic is still under development, some recipes might not work, things can change
 
 - Purpose of this webapp is to remove bloat from recipes and save them for future use. 
