@@ -64,19 +64,15 @@ export const DndRecipeList = () => {
     }
   }, [recipes.data]);
 
-  console.log(recipes.data, localRecipesOrdered);
-
-  const data = localRecipesOrdered.length ? recipes.data : localRecipesOrdered;
-
-  // if (localRecipesOrdered.length === 0) {
-  //   return <Loader />;
-  // }
+  if (localRecipesOrdered.length === 0) {
+    return <Loader />;
+  }
 
   return (
     <div className="container mx-auto">
       <Reorder.Group
         axis="y"
-        values={data!.map((x) => x.id)}
+        values={localRecipesOrdered.map((x) => x.id)}
         onReorder={(ids: string[]) => {
           if (!localRecipesOrdered) return;
           const newOrder = [...localRecipesOrdered];
@@ -85,7 +81,7 @@ export const DndRecipeList = () => {
           debouncedReorder(newOrder.map((x, i) => ({ id: x.id, order: i })));
         }}
       >
-        {data!.map((r) => (
+        {localRecipesOrdered.map((r) => (
           <RecipeCard
             deleteFn={() => deleteRecipe.mutate({ id: r.id })}
             key={r.id}
