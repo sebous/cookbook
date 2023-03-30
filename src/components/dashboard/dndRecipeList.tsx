@@ -7,9 +7,7 @@ import { RecipeCard } from "./RecipeCard";
 
 export const DndRecipeList = () => {
   const trpcUtils = trpc.useContext();
-  const recipes = trpc.useQuery(["recipe.getAllForCurrentUser"], {
-    staleTime: 60,
-  });
+  const recipes = trpc.useQuery(["recipe.getAllForCurrentUser"]);
 
   const deleteRecipe = trpc.useMutation(["recipe.delete"], {
     onSuccess: () => {
@@ -66,15 +64,19 @@ export const DndRecipeList = () => {
     }
   }, [recipes.data]);
 
-  if (localRecipesOrdered.length === 0) {
-    return <Loader />;
-  }
+  console.log(recipes.data, localRecipesOrdered);
+
+  const data = localRecipesOrdered.length ? recipes.data : localRecipesOrdered;
+
+  // if (localRecipesOrdered.length === 0) {
+  //   return <Loader />;
+  // }
 
   return (
     <div className="container mx-auto">
       <Reorder.Group
         axis="y"
-        values={localRecipesOrdered.map((x) => x.id)}
+        values={data!.map((x) => x.id)}
         onReorder={(ids: string[]) => {
           if (!localRecipesOrdered) return;
           const newOrder = [...localRecipesOrdered];
@@ -83,7 +85,7 @@ export const DndRecipeList = () => {
           debouncedReorder(newOrder.map((x, i) => ({ id: x.id, order: i })));
         }}
       >
-        {localRecipesOrdered.map((r) => (
+        {data!.map((r) => (
           <RecipeCard
             deleteFn={() => deleteRecipe.mutate({ id: r.id })}
             key={r.id}

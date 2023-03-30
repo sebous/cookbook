@@ -1,14 +1,8 @@
-import prisma from "@/backend/prisma";
 import { ShareBtn } from "@/components/ShareBtn";
 import type { inferAsyncReturnType } from "@trpc/server";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import type { NextAppPage } from "../_app";
-
-const getRecipeDetail = async (id: string) => {
-  return prisma.recipe.findFirst({ where: { id } });
-};
-
-type RecipeQueryResult = inferAsyncReturnType<typeof getRecipeDetail>;
+import { db } from "@/backend/db";
 
 const RecipePage: NextAppPage<{
   recipe: NonNullable<RecipeQueryResult>;
@@ -28,6 +22,16 @@ const RecipePage: NextAppPage<{
     </article>
   );
 };
+
+const getRecipeDetail = async (id: string) => {
+  return db
+    .selectFrom("Recipe")
+    .selectAll()
+    .where("id", "=", id)
+    .executeTakeFirst();
+};
+
+type RecipeQueryResult = inferAsyncReturnType<typeof getRecipeDetail>;
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const id = ctx.params?.["id"];

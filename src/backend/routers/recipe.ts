@@ -2,7 +2,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createRouter } from "../createRouter";
 import { recipeModule } from "../modules/recipe";
-import prisma from "../prisma";
+import { db } from "../db";
+import { createId } from "@paralleldrive/cuid2";
 
 export const recipeRouter = createRouter()
   .query("getDetail", {
@@ -10,9 +11,14 @@ export const recipeRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ input }) {
-      const recipe = await prisma.recipe.findFirst({
-        where: { id: input.id },
-      });
+      const recipe = await db
+        .selectFrom("Recipe")
+        .selectAll()
+        .where("id", "=", input.id)
+        .executeTakeFirst();
+      // const recipe = await prisma.recipe.findFirst({
+      //   where: { id: input.id },
+      // });
       return recipe;
     },
   })
@@ -29,19 +35,23 @@ export const recipeRouter = createRouter()
   })
   .query("getAll", {
     async resolve() {
-      const recipes = await prisma.recipe.findMany({
-        select: { id: true, name: true },
-      });
+      const recipes = await db
+        .selectFrom("Recipe")
+        .select(["id", "name"])
+        .execute();
       return recipes;
     },
   })
   .query("getAllForCurrentUser", {
     async resolve({ ctx }) {
-      const recipes = await prisma.recipe.findMany({
-        select: { id: true, name: true, order: true },
-        where: { userId: ctx.userId },
-        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
-      });
+      const recipes = await db
+        .selectFrom("Recipe")
+        .select(["id", "name", "order"])
+        .where("userId", "=", ctx.userId)
+        .orderBy("order")
+        .orderBy("createdAt", "desc")
+        .execute();
+
       return recipes;
     },
   })
@@ -50,18 +60,21 @@ export const recipeRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ input, ctx }) {
-      await prisma.recipe.deleteMany({
-        where: { id: input.id, userId: ctx.userId },
-      });
+      await db
+        .deleteFrom("Recipe")
+        .where("id", "=", input.id)
+        .where("userId", "=", ctx.userId)
+        .execute();
     },
   })
   .mutation("order", {
     input: z.array(z.object({ id: z.string(), order: z.number().min(0) })),
     async resolve({ ctx, input }) {
-      const recipes = await prisma.recipe.findMany({
-        select: { id: true },
-        where: { userId: ctx.userId },
-      });
+      const recipes = await db
+        .selectFrom("Recipe")
+        .select(["id"])
+        .where("userId", "=", ctx.userId)
+        .execute();
 
       const dbRecipeIds = recipes.map((r) => r.id);
 
@@ -76,11 +89,17 @@ export const recipeRouter = createRouter()
         });
       }
 
-      await prisma.$transaction(
-        input.map((x) =>
-          prisma.recipe.update({ where: { id: x.id }, data: { ...x } })
-        )
-      );
+      db.transaction().execute(async () => {
+        await Promise.allSettled(
+          input.map((x) =>
+            db
+              .updateTable("Recipe")
+              .set({ order: x.order })
+              .where("id", "=", x.id)
+              .execute()
+          )
+        );
+      });
     },
   })
   .mutation("import", {
@@ -88,32 +107,44 @@ export const recipeRouter = createRouter()
       url: z.string().url(),
     }),
     async resolve({ input, ctx }) {
-      const duplicate = await prisma.recipe.findFirst({
-        where: {
-          url: input.url,
-          userId: ctx.userId,
-        },
-      });
+      const duplicate = await db
+        .selectFrom("Recipe")
+        .select(["id"])
+        .executeTakeFirst();
       if (duplicate) throw "duplicate recipe";
 
       const processedRecipe = await recipeModule.processRecipeUrl(input.url);
 
-      const maxOrderAggr = await prisma.recipe.aggregate({
-        _max: { order: true },
-        where: { userId: ctx.userId },
-      });
-      const { order: maxOrder } = maxOrderAggr._max;
+      const maxOrderValue = await db
+        .selectFrom("Recipe")
+        .select(["order"])
+        .where("userId", "=", ctx.userId)
+        .orderBy("order", "desc")
+        .executeTakeFirst();
 
-      const created = await prisma.recipe.create({
-        data: {
+      // const created = await prisma.recipe.create({
+      //   data: {
+      //     ...processedRecipe,
+      //     url: input.url,
+      //     parsedName: processedRecipe.name,
+      //     userId: ctx.userId,
+      //     // if recipes are ordered, make new item last
+      //     order: typeof maxOrder === "number" ? maxOrder + 1 : null,
+      //   },
+      // });
+      const created = await db
+        .insertInto("Recipe")
+        .values({
           ...processedRecipe,
+          id: createId(),
           url: input.url,
           parsedName: processedRecipe.name,
           userId: ctx.userId,
           // if recipes are ordered, make new item last
-          order: typeof maxOrder === "number" ? maxOrder + 1 : null,
-        },
-      });
+          order: typeof maxOrderValue === "number" ? maxOrderValue + 1 : null,
+          updatedAt: new Date(),
+        })
+        .execute();
       return created;
     },
   });

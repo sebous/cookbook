@@ -2,16 +2,18 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-kysely"
+  output   = "../src/backend/__generated__"
+  fileName = "dbTypes.ts"
 }
 
 datasource db {
-  provider = "cockroachdb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Recipe {
-  id           String   @id @default(cuid())
+  id           String   @id
   userId       String
   name         String
   parsedName   String
