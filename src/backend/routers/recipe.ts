@@ -16,9 +16,6 @@ export const recipeRouter = createRouter()
         .selectAll()
         .where("id", "=", input.id)
         .executeTakeFirst();
-      // const recipe = await prisma.recipe.findFirst({
-      //   where: { id: input.id },
-      // });
       return recipe;
     },
   })
@@ -111,6 +108,7 @@ export const recipeRouter = createRouter()
         .selectFrom("Recipe")
         .select(["id"])
         .executeTakeFirst();
+
       if (duplicate) throw "duplicate recipe";
 
       const processedRecipe = await recipeModule.processRecipeUrl(input.url);
@@ -122,16 +120,6 @@ export const recipeRouter = createRouter()
         .orderBy("order", "desc")
         .executeTakeFirst();
 
-      // const created = await prisma.recipe.create({
-      //   data: {
-      //     ...processedRecipe,
-      //     url: input.url,
-      //     parsedName: processedRecipe.name,
-      //     userId: ctx.userId,
-      //     // if recipes are ordered, make new item last
-      //     order: typeof maxOrder === "number" ? maxOrder + 1 : null,
-      //   },
-      // });
       const created = await db
         .insertInto("Recipe")
         .values({
