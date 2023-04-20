@@ -62,6 +62,23 @@ export const recipeRouter = createRouter()
         .where("id", "=", input.id)
         .where("userId", "=", ctx.userId)
         .execute();
+
+      const recipes = await db
+        .selectFrom("Recipe")
+        .select("id")
+        .where("userId", "=", ctx.userId)
+        .orderBy("order")
+        .execute();
+
+      db.transaction().execute(async () => {
+        recipes.map((rec, i) =>
+          db
+            .updateTable("Recipe")
+            .set({ order: i + 1 })
+            .where("id", "=", rec.id)
+            .execute()
+        );
+      });
     },
   })
   .mutation("order", {
@@ -87,14 +104,12 @@ export const recipeRouter = createRouter()
       }
 
       db.transaction().execute(async () => {
-        await Promise.allSettled(
-          input.map((x) =>
-            db
-              .updateTable("Recipe")
-              .set({ order: x.order })
-              .where("id", "=", x.id)
-              .execute()
-          )
+        input.map((x) =>
+          db
+            .updateTable("Recipe")
+            .set({ order: x.order })
+            .where("id", "=", x.id)
+            .execute()
         );
       });
     },
