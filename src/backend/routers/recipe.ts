@@ -76,7 +76,7 @@ export const recipeRouter = createRouter()
 						.updateTable("Recipe")
 						.set({ order: i + 1 })
 						.where("id", "=", rec.id)
-						.execute()
+						.execute(),
 				);
 			});
 		},
@@ -109,7 +109,7 @@ export const recipeRouter = createRouter()
 						.updateTable("Recipe")
 						.set({ order: x.order })
 						.where("id", "=", x.id)
-						.execute()
+						.execute(),
 				);
 			});
 		},

@@ -3,9 +3,9 @@ import { Pool } from "pg";
 import type { DB } from "./__generated__/dbTypes";
 
 export const db = new Kysely<DB>({
-  dialect: new PostgresDialect({
-    pool: new Pool({
-      connectionString: process.env.DATABASE_URL,
-    }),
-  }),
+	dialect: new PostgresDialect({
+		pool: new Pool({
+			connectionString: process.env.DATABASE_URL,
+		}),
+	}),
 });

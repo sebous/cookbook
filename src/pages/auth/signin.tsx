@@ -1,29 +1,17 @@
-import { getProviders, signIn } from "next-auth/react";
-import type { InferGetServerSidePropsType } from "next";
+import { signIn } from "next-auth/react";
 import { BoxFullCenter } from "@/components/layout/BoxFullCenter";
 
-export const getServerSideProps = async () => {
-  const providers = await getProviders();
-  return {
-    props: {
-      providers,
-    },
-  };
-};
-
-const SignInPage = ({
-  providers,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  return (
-    <BoxFullCenter>
-      <button
-        className="btn center"
-        onClick={() => signIn(providers?.facebook?.id)}
-      >
-        login via FB
-      </button>
-    </BoxFullCenter>
-  );
+const SignInPage = () => {
+	return (
+		<BoxFullCenter className="flex gap-4">
+			<button className="btn center" onClick={() => signIn("facebook")}>
+				login via Facebook
+			</button>
+			<button className="btn center" onClick={() => signIn("discord")}>
+				login via Discord
+			</button>
+		</BoxFullCenter>
+	);
 };
 
 export default SignInPage;
